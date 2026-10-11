@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Личный кабинет — Книжная полка{% endblock %}
+
+{% macro error(name) %}
+{% if errors[name] %}<span class="field-error">{{ errors[name] }}</span>{% endif %}
+{% endmacro %}
+
+{% block content %}
+<section class="form-card form-card-narrow">
+    <h1>Личный кабинет</h1>
+    <p class="muted">Вы вошли как <strong>{{ current_user.email }}</strong>. На сайте с {{ current_user.created_at | date }}.</p>
+
+    {% if saved %}<p class="notice notice-success" role="status">Почта изменена.</p>{% endif %}
+
+    <h2 class="form-section">Смена почты</h2>
+    <form method="post" action="/account/email" novalidate>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <div class="field{% if errors.email %} has-error{% endif %}">
+            <label for="email">Новая почта</label>
+            <input id="email" name="email" type="email" value="{{ form.email or '' }}" maxlength="254" autocomplete="email" required>
+            {{ error("email") }}
+        </div>
+
+        <div class="field{% if errors.password %} has-error{% endif %}">
+            <label for="password">Текущий пароль</label>
+            <input id="password" name="password" type="password" maxlength="128" autocomplete="current-password" required>
+            <span class="field-hint">Нужен, чтобы подтвердить, что почту меняете именно вы.</span>
+            {{ error("password") }}
+        </div>
+
+        <div class="form-actions">
+            <button class="btn btn-primary" type="submit">Сменить почту</button>
+        </div>
+    </form>
+
+    <form class="logout-form" method="post" action="/logout">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <button class="btn btn-ghost" type="submit">Выйти</button>
+    </form>
+</section>
+{% endblock %}

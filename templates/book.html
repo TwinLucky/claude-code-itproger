@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% from "_macros.html" import cover, stars %}
+
+{% block title %}{{ book.title }} — Книжная полка{% endblock %}
+
+{% block content %}
+<a class="back-link" href="/"><span aria-hidden="true">←</span> Все книги</a>
+
+<article class="book">
+    <aside class="book-side">
+        {{ cover(book, large=True) }}
+        {% if current_user %}
+        <div class="book-actions">
+            <a class="btn btn-primary" href="/books/{{ book.id }}/edit">Редактировать</a>
+            <form action="/books/{{ book.id }}/delete" method="post" data-title="{{ book.title }}"
+                  onsubmit="return confirm('Удалить книгу «' + this.dataset.title + '»?');">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <button class="btn btn-danger" type="submit">Удалить</button>
+            </form>
+        </div>
+        {% endif %}
+    </aside>
+
+    <div class="book-main">
+        <div class="card-meta">
+            {% if book.genre %}<span class="tag">{{ book.genre }}</span>{% endif %}
+            {{ stars(book.rating) }}
+        </div>
+        <h1 class="book-title">{{ book.title }}</h1>
+        <p class="book-author">
+            {{ book.author }}{% if book.year %} · {{ book.year }}{% endif %}
+        </p>
+
+        {% if book.description %}
+        <p class="book-lead">{{ book.description }}</p>
+        {% endif %}
+
+        {% if book.content %}
+        <div class="prose">
+            {% for paragraph in book.content.split("\n\n") %}
+            {% if paragraph.strip() %}<p>{{ paragraph }}</p>{% endif %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="muted">Заметок об этой книге пока нет.</p>
+        {% endif %}
+
+        <p class="book-dates muted">
+            Опубликовано {{ book.created_at|date }}
+            {% if book.updated_at != book.created_at %} · обновлено {{ book.updated_at|date }}{% endif %}
+        </p>
+    </div>
+</article>
+{% endblock %}

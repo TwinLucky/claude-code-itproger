@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}{{ status_code }} — Книжная полка{% endblock %}
+
+{% block content %}
+<section class="empty">
+    <p class="error-code">{{ status_code }}</p>
+    <h1>{% if status_code == 404 %}Такой страницы нет{% else %}Что-то пошло не так{% endif %}</h1>
+    {% if detail %}<p>{{ detail }}</p>{% endif %}
+    <a class="btn btn-primary" href="/">На главную</a>
+</section>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Регистрация — Книжная полка{% endblock %}
+
+{% macro error(name) %}
+{% if errors[name] %}<span class="field-error">{{ errors[name] }}</span>{% endif %}
+{% endmacro %}
+
+{% block content %}
+<section class="form-card form-card-narrow">
+    <h1>Регистрация</h1>
+    <p class="muted">Уже есть учётная запись? <a href="/login">Войдите</a>.</p>
+
+    <form method="post" novalidate>
+        <div class="field{% if errors.email %} has-error{% endif %}">
+            <label for="email">Почта</label>
+            <input id="email" name="email" type="email" value="{{ form.email or '' }}" maxlength="254" autocomplete="email" required autofocus>
+            {{ error("email") }}
+        </div>
+
+        <div class="field{% if errors.password %} has-error{% endif %}">
+            <label for="password">Пароль</label>
+            <input id="password" name="password" type="password" minlength="8" maxlength="128" autocomplete="new-password" required>
+            <span class="field-hint">Не короче 8 символов.</span>
+            {{ error("password") }}
+        </div>
+
+        <div class="field{% if errors.password2 %} has-error{% endif %}">
+            <label for="password2">Пароль ещё раз</label>
+            <input id="password2" name="password2" type="password" maxlength="128" autocomplete="new-password" required>
+            {{ error("password2") }}
+        </div>
+
+        <div class="form-actions">
+            <button class="btn btn-primary" type="submit">Зарегистрироваться</button>
+            <a class="btn btn-ghost" href="/">Отмена</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}{% if is_new %}Новая книга{% else %}Редактирование{% endif %} — Книжная полка{% endblock %}
+
+{% macro error(name) %}
+{% if errors[name] %}<span class="field-error">{{ errors[name] }}</span>{% endif %}
+{% endmacro %}
+
+{% block content %}
+{% set cancel_url = "/" if is_new else "/books/" ~ book.id %}
+<a class="back-link" href="{{ cancel_url }}"><span aria-hidden="true">←</span> Назад</a>
+
+<section class="form-card">
+    <h1>{% if is_new %}Новая книга{% else %}Редактирование книги{% endif %}</h1>
+    <p class="muted">Поля, отмеченные звёздочкой, обязательны.</p>
+
+    <form method="post" novalidate>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <div class="field{% if errors.title %} has-error{% endif %}">
+            <label for="title">Название *</label>
+            <input id="title" name="title" type="text" value="{{ book.title or '' }}" maxlength="200" required autofocus>
+            {{ error("title") }}
+        </div>
+
+        <div class="field{% if errors.author %} has-error{% endif %}">
+            <label for="author">Автор *</label>
+            <input id="author" name="author" type="text" value="{{ book.author or '' }}" maxlength="200" required>
+            {{ error("author") }}
+        </div>
+
+        <div class="field-row">
+            <div class="field{% if errors.genre %} has-error{% endif %}">
+                <label for="genre">Жанр</label>
+                <input id="genre" name="genre" type="text" value="{{ book.genre or '' }}" maxlength="100">
+                {{ error("genre") }}
+            </div>
+
+            <div class="field{% if errors.year %} has-error{% endif %}">
+                <label for="year">Год издания</label>
+                {# type="text", а не "number": при вводе вроде «1999e» браузер отправил бы пустое значение, и год молча стёрся бы #}
+                <input id="year" name="year" type="text" inputmode="numeric" maxlength="5" value="{{ book.year if book.year is not none else '' }}">
+                {{ error("year") }}
+            </div>
+
+            <div class="field{% if errors.rating %} has-error{% endif %}">
+                <label for="rating">Оценка</label>
+                <select id="rating" name="rating">
+                    <option value="0">Без оценки</option>
+                    {% for value in range(1, 6) %}
+                    <option value="{{ value }}"{% if book.rating == value %} selected{% endif %}>{{ "★" * value }} ({{ value }})</option>
+                    {% endfor %}
+                </select>
+                {{ error("rating") }}
+            </div>
+        </div>
+
+        <div class="field{% if errors.description %} has-error{% endif %}">
+            <label for="description">Краткое описание</label>
+            <textarea id="description" name="description" rows="3" maxlength="500">{{ book.description or '' }}</textarea>
+            <span class="field-hint">Показывается на карточке на главной странице.</span>
+            {{ error("description") }}
+        </div>
+
+        <div class="field{% if errors.content %} has-error{% endif %}">
+            <label for="content">Заметки о книге</label>
+            <textarea id="content" name="content" rows="12" maxlength="20000">{{ book.content or '' }}</textarea>
+            <span class="field-hint">Абзацы разделяйте пустой строкой.</span>
+            {{ error("content") }}
+        </div>
+
+        <div class="form-actions">
+            <button class="btn btn-primary" type="submit">{% if is_new %}Добавить книгу{% else %}Сохранить изменения{% endif %}</button>
+            <a class="btn btn-ghost" href="{{ cancel_url }}">Отмена</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

@@ -1,0 +1,16 @@
+{# Обложка генерируется из названия: оттенок зависит от id книги. #}
+{% macro cover(book, large=False) %}
+<div class="cover{% if large %} cover-large{% endif %}" style="--hue: {{ (book.id * 47) % 360 }}" aria-hidden="true">
+    <span class="cover-title">{{ book.title }}</span>
+    <span class="cover-author">{{ book.author }}</span>
+</div>
+{% endmacro %}
+
+{% macro stars(rating) %}
+{% if rating %}
+<span class="stars" title="Оценка: {{ rating }} из 5">
+    <span class="stars-on">{{ "★" * rating }}</span><span class="stars-off">{{ "★" * (5 - rating) }}</span>
+    <span class="visually-hidden">Оценка: {{ rating }} из 5</span>
+</span>
+{% endif %}
+{% endmacro %}

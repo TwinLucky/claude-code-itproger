@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Вход — Книжная полка{% endblock %}
+
+{% block content %}
+<section class="form-card form-card-narrow">
+    <h1>Вход</h1>
+    <p class="muted">Ещё нет учётной записи? <a href="/register">Зарегистрируйтесь</a>.</p>
+
+    {% if errors.form %}<p class="notice notice-error" role="alert">{{ errors.form }}</p>{% endif %}
+
+    <form method="post" novalidate>
+        <div class="field">
+            <label for="email">Почта</label>
+            <input id="email" name="email" type="email" value="{{ form.email or '' }}" maxlength="254" autocomplete="email" required autofocus>
+        </div>
+
+        <div class="field">
+            <label for="password">Пароль</label>
+            <input id="password" name="password" type="password" maxlength="128" autocomplete="current-password" required>
+        </div>
+
+        <div class="form-actions">
+            <button class="btn btn-primary" type="submit">Войти</button>
+            <a class="btn btn-ghost" href="/">Отмена</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

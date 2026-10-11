@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% from "_macros.html" import cover, stars %}
+
+{% block content %}
+<section class="hero">
+    <p class="eyebrow">Блог о прочитанном</p>
+    <h1>Книги, к которым хочется возвращаться</h1>
+    <p class="hero-text">Заметки, впечатления и оценки — всё, что осталось после последней страницы.</p>
+
+    <form class="search" action="/" method="get" role="search">
+        <input type="search" name="q" value="{{ q }}" placeholder="Поиск по названию, автору или жанру" aria-label="Поиск книг">
+        <button class="btn btn-primary" type="submit">Найти</button>
+    </form>
+</section>
+
+{% if q %}
+<p class="result-info">
+    По запросу «{{ q }}» найдено: {{ total }}.
+    <a href="/">Сбросить поиск</a>
+</p>
+{% endif %}
+
+{% if books %}
+<section class="grid">
+    {% for book in books %}
+    <article class="card">
+        <a class="card-cover" href="/books/{{ book.id }}" tabindex="-1">{{ cover(book) }}</a>
+        <div class="card-body">
+            <div class="card-meta">
+                {% if book.genre %}<span class="tag">{{ book.genre }}</span>{% endif %}
+                {% if book.year %}<span class="muted">{{ book.year }}</span>{% endif %}
+            </div>
+            <h2 class="card-title"><a href="/books/{{ book.id }}">{{ book.title }}</a></h2>
+            <p class="card-author">{{ book.author }}</p>
+            {% if book.description %}<p class="card-text">{{ book.description }}</p>{% endif %}
+            <div class="card-footer">
+                {{ stars(book.rating) }}
+                <a class="link-arrow" href="/books/{{ book.id }}">Читать <span aria-hidden="true">→</span></a>
+            </div>
+        </div>
+    </article>
+    {% endfor %}
+</section>
+
+{% if pages > 1 %}
+{% macro page_url(number) %}/?{% if q %}q={{ q|urlencode }}&amp;{% endif %}page={{ number }}{% endmacro %}
+<nav class="pager" aria-label="Страницы">
+    {% if page > 1 %}<a class="btn btn-ghost btn-small" href="{{ page_url(page - 1) }}"><span aria-hidden="true">←</span> Новее</a>{% endif %}
+    <span class="muted">Страница {{ page }} из {{ pages }}</span>
+    {% if page < pages %}<a class="btn btn-ghost btn-small" href="{{ page_url(page + 1) }}">Старше <span aria-hidden="true">→</span></a>{% endif %}
+</nav>
+{% endif %}
+{% else %}
+<section class="empty">
+    <h2>{% if q %}Ничего не нашлось{% else %}Полка пока пуста{% endif %}</h2>
+    <p>{% if q %}Попробуйте изменить запрос.{% else %}Добавьте первую книгу — и она появится здесь.{% endif %}</p>
+    <a class="btn btn-primary" href="/books/new">+ Добавить книгу</a>
+</section>
+{% endif %}
+{% endblock %}
